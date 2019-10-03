@@ -67,7 +67,8 @@ var shared = {
 
     // Här har jag definierat en bool för att hålla koll på om scenen är pausad.
     // Du kommer antagligen att behöva definiera dina egna flaggor på liknande sätt.
-    paused: false
+    paused: false,
+    cullBack: false
 };
 
 
@@ -122,6 +123,7 @@ function main(context) {
     //      på olika grafikkortsinställningar (exempelvis baksidegallring).
     //      Tips: Googla 'WebGL enable backface culling'
     //
+    gl.enable(gl.CULL_FACE);
 
     // Kör funktionen 'frameCallback' när fönstret är redo att rendera 
     // nästa frame. frameCallback() kommer i sin tur att begära en ny
@@ -143,14 +145,14 @@ function createSquare()
     // gånger ([-30, 0, 30] exempelvis). 
     var positions = [
         // Den första triangeln
-        -30, 0, -30,
-        -30, 0, 30,
-        30, 0, -30,
+        -20, 0, -30,
+        -20, 0, 30,
+        20, 0, -30,
 
         // Den andra triangeln
-        -30, 0, 30,
-        30, 0, 30,
-        30, 0, -30
+        -20, 0, 30,
+        20, 0, 30,
+        20, 0, -30
     ];
 
     // Alla hörn skall vara grå. Trots det måste vi ange lika många 
@@ -163,7 +165,7 @@ function createSquare()
         // färg består av 4 värden. Längden på arrayen kommer alltså
         // att bli 6*4=24, medan antalet värden i positionsarrayen är
         // 6*3=18.
-        colors = colors.concat([0.5, 0.5, 0.5, 1]);
+        colors = colors.concat([1.0, 0.5, 0.5, 1]);
     }
 
     // Vi begär att grafikkortet allokerar en ny buffer och fyller den
@@ -207,6 +209,157 @@ function createHouse() {
     //     shared.house.colorBuffer
     //     shared.house.triangleCount
     //
+	
+	var positions = [
+        // Framsida
+        -1, 0, -1,
+        1, 1, -1,
+        1, 0, -1,
+        -1, 0, -1,
+        -1, 1, -1,
+        1, 1, -1,
+        -1, 1, -1,
+        0, 2, -1,
+        1, 1, -1,
+
+        // Baksida
+        -1, 0, 1,
+        1, 0, 1,
+        1, 1, 1,
+        -1, 0, 1,
+        1, 1, 1,
+        -1, 1, 1,
+        -1, 1, 1,
+        1, 1, 1,
+        0, 2, 1,
+
+        // Vänster vägg
+        -1, 1, 1,
+        -1, 1, -1,
+        -1, 0, 1,
+
+        -1, 0, 1,
+        -1, 1, -1,
+        -1, 0, -1,
+
+        0, 2, 1,
+        0, 2, -1,
+        -1, 1, 1,
+
+        -1, 1, 1,
+        0, 2, -1,
+        -1, 1, -1,
+
+        // Höger vägg
+        1, 1, 1,
+        1, 0, 1,
+        1, 1, -1,
+
+        1, 0, 1,
+        1, 0, -1,
+        1, 1, -1,
+
+        0, 2, 1,
+        1, 1, 1,
+        0, 2, -1,
+
+        1, 1, 1,
+        1, 1, -1,
+        0, 2, -1,
+
+        // Floor
+        -1, 0, 1,
+        1, 0, -1,
+        1, 0, 1,
+
+        -1, 0, 1,
+        -1, 0, -1,
+        1, 0, -1
+    ];
+
+    const RED    = [1.0, 0.0, 0.0, 1.0];
+    const GREEN  = [0.0, 1.0, 0.0, 1.0];
+    const BLUE   = [0.0, 0.0, 1.0, 1.0];
+    const YELLOW = [1.0, 1.0, 0.0, 1.0];
+    const CYAN   = [0.0, 1.0, 1.0, 1.0];
+    const WHITE  = [1.0, 1.0, 1.0, 1.0];
+
+    var colors = [];
+
+    // Framsida
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(GREEN);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(RED);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(RED);
+    colors = colors.concat(CYAN);
+    colors = colors.concat(BLUE);
+
+    // Baksida
+    colors = colors.concat(CYAN);
+    colors = colors.concat(RED);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(CYAN);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(GREEN);
+
+    // Vänster vägg
+    colors = colors.concat(BLUE);
+    colors = colors.concat(RED);
+    colors = colors.concat(CYAN);
+
+    colors = colors.concat(CYAN);
+    colors = colors.concat(RED);
+    colors = colors.concat(YELLOW);
+
+    colors = colors.concat(GREEN);
+    colors = colors.concat(CYAN);
+    colors = colors.concat(BLUE);
+
+    colors = colors.concat(BLUE);
+    colors = colors.concat(CYAN);
+    colors = colors.concat(RED);
+
+    // Höger vägg
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(RED);
+    colors = colors.concat(BLUE);
+
+    colors = colors.concat(RED);
+    colors = colors.concat(GREEN);
+    colors = colors.concat(BLUE);
+
+    colors = colors.concat(GREEN);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(CYAN);
+
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(CYAN);
+
+    // Golv
+    colors = colors.concat(CYAN);
+    colors = colors.concat(GREEN);
+    colors = colors.concat(RED);
+
+    colors = colors.concat(CYAN);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(GREEN);
+
+    shared.house.positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.house.positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    shared.house.colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.house.colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    shared.house.triangleCount = positions.length / 3;
 
 }// function createHouse()
 
@@ -305,16 +458,24 @@ function keydown(event) {
         
     // Slå på/av djup-testning.
     if (event.key == 'd') {
-        //
-        // Den här funktionen skriver du själv.
-        //
+        if (shared.depthTest) {
+            shared.depthTest = false;
+            gl.disable(gl.DEPTH_TEST);
+        } else {
+            shared.depthTest = true;
+            gl.enable(gl.DEPTH_TEST);
+        }
     }
 
     // Slå på/av backface-culling.
     if (event.key == 'c') {
-        //
-        // Den här funktionen skriver du själv.
-        //
+        if (shared.cullBack) {
+            shared.cullBack = false;
+            gl.disable(gl.CULL_FACE);
+        } else {
+            shared.cullBack = true;
+            gl.enable(gl.CULL_FACE);
+        }
     }
 
     // Växla mellan 'over' och 'add' som metod för alpha-blending.
@@ -429,11 +590,16 @@ function drawScene(time) {
 
 
 
-    //
-    // <-- Här implementerar du kod liknande den ovan, men som kör drawHouse()
-    //     istället för drawSquare() och som transformerar objektet så som det står
-    //     i uppgiften.
-    //
+    mat4.identity(world);
+    const houseMove  = vec3.fromValues(-30.0, -8.0, 0.0);
+    const houseScale = vec3.fromValues(10.0, 10.0, 10.0);
+    mat4.translate(world, world, houseMove);
+    mat4.rotateZ(world, world, time * 1.5);
+    mat4.scale(world, world, houseScale);
+    setWorldViewProjection();
+    drawHouse();
+
+
 
     //
     // <-- Här implementerar du koden som kör drawHouse2() 
