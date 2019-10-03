@@ -68,7 +68,8 @@ var shared = {
     // Här har jag definierat en bool för att hålla koll på om scenen är pausad.
     // Du kommer antagligen att behöva definiera dina egna flaggor på liknande sätt.
     paused: false,
-    cullBack: false
+    cullBack: false,
+    blendOver: true
 };
 
 
@@ -123,7 +124,10 @@ function main(context) {
     //      på olika grafikkortsinställningar (exempelvis baksidegallring).
     //      Tips: Googla 'WebGL enable backface culling'
     //
-    gl.enable(gl.CULL_FACE);
+    if (shared.cullBack) gl.enable(gl.CULL_FACE);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // Kör funktionen 'frameCallback' när fönstret är redo att rendera 
     // nästa frame. frameCallback() kommer i sin tur att begära en ny
@@ -379,7 +383,7 @@ function createHouse2() {
         1, 1, 1,
         -1, 1, 1, 
         1, 0, 1,
-        -1, 0, 1,
+        -1, 0, 1
     ];
 
     // Här lagras varje hörns färg i samma ordning som ovan. När du är 
@@ -465,6 +469,45 @@ function createPlanes() {
     //     shared.planes.triangleCount
     //
 
+    var vertices = [
+        -4, -1, -1,
+        -4, -1, 1,
+        -4, 1, -1,
+        -4, 1, 1,
+        4, -1, -1,
+        4, -1, 1,
+        4, 1, -1,
+        4, 1, 1
+    ];
+
+    var colors = [];
+    for (var i = 0; i < 4; i++) {
+        colors = colors.concat([1.0, 0.0, 0.0, 0.5]);
+    }
+
+    for (var i = 0; i < 4; i++) {
+        colors = colors.concat([0.0, 0.0, 1.0, 0.5]);
+    }
+
+    var indices = [
+        0, 1, 3, 0, 3, 2,
+        4, 5, 7, 4, 7, 6,
+    ];
+
+    shared.planes.indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shared.planes.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+    shared.planes.positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.planes.positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    shared.planes.colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.planes.colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    shared.planes.indiceCount = indices.length;
+
 }// function createPlanes()
 
 
@@ -506,9 +549,7 @@ function keydown(event) {
 
     // Växla mellan 'over' och 'add' som metod för alpha-blending.
     if (event.key == 'b') {
-        //
-        // Den här funktionen skriver du själv.
-        //
+        shared.blendOver = !shared.blendOver;
     }
 }// function keydown()
 
@@ -637,9 +678,14 @@ function drawScene(time) {
     drawHouse2();
 
 
-    //
-    // <-- Här implementerar du koden som kör drawPlanes()
-    //
+    mat4.identity(world);
+    const planeMove = vec3.fromValues(0.0, 0.0, 0.0);
+    const planeScale = vec3.fromValues(10.0, 10.0, 10.0);
+    mat4.translate(world, world, planeMove);
+    //mat4.rotateZ(world, world, time * 1.5);
+    mat4.scale(world, world, planeScale);
+    setWorldViewProjection();
+    drawPlanes();
 
     // Tips: Tänk på att sätta världsmatrisen till identity mellan olika draw-calls
     // och att köra setWorldViewProjection() för att skicka matrisen till grafikkortet
@@ -707,10 +753,34 @@ function drawHouse2() {
 // Tips: Du kan hitta mycket tips genom att Googla på exempelvis 'WebGL set blend mode'
 //
 function drawPlanes() {
+    if (shared.blendOver) {
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    } else {
+        gl.blendFunc(gl.ONE, gl.ONE);
+    }
 
-    //
-    // <-- Måla ut de halvtransparenta planen här med hjälp av en index-lista
-    //
+    gl.disable(gl.CULL_FACE);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shared.planes.indexBuffer);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.planes.positionBuffer);
+    gl.vertexAttribPointer(shared.vertexPositionLocation, 3, gl.FLOAT, gl.FALSE, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.planes.colorBuffer);
+    gl.vertexAttribPointer(shared.vertexColorLocation, 4, gl.FLOAT, gl.FALSE, 0, 0);
+
+    // If we are looking at the scene from the left, draw the first quad first
+    if (shared.cameraPosition[0] < 0.0) {
+        gl.drawElements(gl.TRIANGLES, shared.planes.indiceCount / 2, gl.UNSIGNED_SHORT, 6 * 2);
+        gl.drawElements(gl.TRIANGLES, shared.planes.indiceCount / 2, gl.UNSIGNED_SHORT, 0);
+
+    // If we are looking at the scene from the right, draw the second quad first
+    } else {
+        gl.drawElements(gl.TRIANGLES, shared.planes.indiceCount, gl.UNSIGNED_SHORT, 0);
+    }
+    
+    if (shared.cullBack) gl.enable(gl.CULL_FACE);
+
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 }// function drawPlanes()
 
