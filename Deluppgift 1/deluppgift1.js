@@ -192,7 +192,12 @@ function createSquare()
 
 }// function createSquare()
 
-
+const RED = [1.0, 0.0, 0.0, 1.0];
+const GREEN = [0.0, 1.0, 0.0, 1.0];
+const BLUE = [0.0, 0.0, 1.0, 1.0];
+const YELLOW = [1.0, 1.0, 0.0, 1.0];
+const CYAN = [0.0, 1.0, 1.0, 1.0];
+const WHITE = [1.0, 1.0, 1.0, 1.0];
 
 // Skapar det första huset (du måste själv implementera den här funktionen)
 function createHouse() {
@@ -276,13 +281,6 @@ function createHouse() {
         -1, 0, -1,
         1, 0, -1
     ];
-
-    const RED    = [1.0, 0.0, 0.0, 1.0];
-    const GREEN  = [0.0, 1.0, 0.0, 1.0];
-    const BLUE   = [0.0, 0.0, 1.0, 1.0];
-    const YELLOW = [1.0, 1.0, 0.0, 1.0];
-    const CYAN   = [0.0, 1.0, 1.0, 1.0];
-    const WHITE  = [1.0, 1.0, 1.0, 1.0];
 
     var colors = [];
 
@@ -369,37 +367,65 @@ function createHouse() {
 // istället för en kvadrat)
 function createHouse2() {
 
-    //
-    // Detta hus skall se identiskt ut som det förra, men istället för
-    // att ange samma hörn flera gånger skall du använda en indexlista.
-    // Nedan finns ett exempel som skapar en rektangel med hjälp av en
-    // indexlista.
-    //
-
     // Här lagras varje unikt hörn. När du är färdig kommer den att 
     // bestå av 10 hörnen (index 0 - 9) och alltså totalt 30 nummer.
     var vertices = [
-        0, -15, -15, // Hörn 0     <--- OBS! Dessa hörn skall bytas ut!
-        0, -15, 15,  // Hörn 1
-        0, 15, -15,  // Hörn 2
-        0, 15, 15    // Hörn 3
+        0, 2, -1, 
+        1, 1, -1,
+        -1, 1, -1,
+        1, 0, -1,
+        -1, 0, -1,
+        0, 2, 1,
+        1, 1, 1,
+        -1, 1, 1, 
+        1, 0, 1,
+        -1, 0, 1,
     ];
 
     // Här lagras varje hörns färg i samma ordning som ovan. När du är 
     // färdig kommer den att bestå av 10 färger (index 0 - 9) och 
     // alltså totalt 40 nummer (10 * 4).
-    var colors = [ 
-        1, 0, 0, 1, // Röd        <--- OBS! Dessa färger skall bytas ut!
-        0, 1, 0, 1, // Grön
-        0, 0, 1, 0, // Blå
-        1, 1, 1, 1  // Vit
-    ];
+    var colors = [];
+    colors = colors.concat(CYAN);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(RED);
+    colors = colors.concat(GREEN);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(GREEN);
+    colors = colors.concat(YELLOW);
+    colors = colors.concat(BLUE);
+    colors = colors.concat(RED);
+    colors = colors.concat(CYAN);
 
     // Två trianglar definieras genom att lista indexen i arrayerna ovan.
     // När funktionen är färdig kommer den att bestå av 16 trianglar, dvs. 48 index.
     var indices = [ 
-        0, 1, 3, // Första triangeln   <--- OBS! Dessa index skall bytas ut!
-        0, 3, 2  // Andra triangeln
+
+        // Framsida
+        0, 1, 2,
+        2, 1, 3,
+        2, 3, 4,
+
+        // Baksida
+        5, 7, 6,
+        7, 8, 6,
+        7, 9, 8,
+
+        // Vänster vägg
+        5, 0, 2,
+        5, 2, 7,
+        7, 2, 9,
+        9, 2, 4,
+
+        // Höger vägg
+        5, 1, 0, 
+        5, 6, 1, 
+        6, 8, 1, 
+        8, 3, 1, 
+
+        // Golv
+        9, 3, 8,
+        9, 4, 3
     ];
 
     // Vi allokerar en ny buffer, men detta är en ELEMENT_ARRAY_BUFFER istället för en
@@ -591,7 +617,7 @@ function drawScene(time) {
 
 
     mat4.identity(world);
-    const houseMove  = vec3.fromValues(-30.0, -8.0, 0.0);
+    const houseMove  = vec3.fromValues(-20.0, -8.0, 0.0);
     const houseScale = vec3.fromValues(10.0, 10.0, 10.0);
     mat4.translate(world, world, houseMove);
     mat4.rotateZ(world, world, time * 1.5);
@@ -601,9 +627,15 @@ function drawScene(time) {
 
 
 
-    //
-    // <-- Här implementerar du koden som kör drawHouse2() 
-    //
+    mat4.identity(world);
+    const houseMove2 = vec3.fromValues(20.0, -8.0, 0.0);
+    const houseScale2 = vec3.fromValues(10.0, 10.0, 10.0);
+    mat4.translate(world, world, houseMove2);
+    mat4.rotateZ(world, world, time * 1.5);
+    mat4.scale(world, world, houseScale2);
+    setWorldViewProjection();
+    drawHouse2();
+
 
     //
     // <-- Här implementerar du koden som kör drawPlanes()
