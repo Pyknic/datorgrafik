@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--
+
+        Du behöver inte ändra något i den här filen.
+        Gör dina ändringar i 'deluppgift2.js'
+
+    -->
+    <meta charset="UTF-8">
+    <title>Datorgrafik - Deluppgift 2</title>
+    <script src="js/gl-matrix-min.js"></script>
+    <script src="js/support.js"></script>
+    <script src="deluppgift2.js"></script>
+    <script>
+        function start() {
+			var canvas = document.getElementById('canvas');
+			var context = canvas.getContext('webgl');
+			if (!context) {
+				console.error('Failed to set up the WebGL Context.');
+				return;
+			}
+			main(context); // <-- Här körs main() som du hittar i 'deluppgift2.js'
+        }
+    </script>
+</head>
+<body onload="start()" style="background-color:lightgray">
+    <canvas id="canvas" width="800" height="500"></canvas>
+</body>
+</html>
