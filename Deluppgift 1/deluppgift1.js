@@ -37,25 +37,25 @@ var gl;
 var shared = {
 
     // Transformationsmatriser, 'mat4' är ett externt bibliotek. Se http://glmatrix.net/docs/module-mat4.html
-	worldMatrix: mat4.create(),               // W:     Transformerar från modellrymd till världsrymd
-	viewMatrix: mat4.create(),                // V:     Transformerar från världsrymd till vy-rymd
-	projectionMatrix: mat4.create(),          // P:     Gör avlägsna punkter mindre för att skapa djup-känsla
+    worldMatrix: mat4.create(),               // W:     Transformerar från modellrymd till världsrymd
+    viewMatrix: mat4.create(),                // V:     Transformerar från världsrymd till vy-rymd
+    projectionMatrix: mat4.create(),          // P:     Gör avlägsna punkter mindre för att skapa djup-känsla
     viewProjectionMatrix: mat4.create(),      // P*V:   Uppdateras i frameCallback()
     worldViewProjectionMatrix: mat4.create(), // P*V*W: Uppdateras i setWorldViewProjection()
 
     // Referenser som används när data skickas till grafikkortet
-	worldViewProjectionMatrixLocation: null,
-	vertexPositionLocation: null,
-	vertexColorLocation: null,
+    worldViewProjectionMatrixLocation: null,
+    vertexPositionLocation: null,
+    vertexColorLocation: null,
 
     // Används för att räkna ut deltaTime
-	time: 0,
-	previousTime: 0,
+    time: 0,
+    previousTime: 0,
 
     // Kamerans nuvarande position. Sätts i frameCallback().
     // Du kan använda denna om du vill räkna ut avståndet till kameran.
     // 'vec3' är ett externt bibliotek. Se http://glmatrix.net/docs/module-vec3.html
-	cameraPosition: vec3.create(),
+    cameraPosition: vec3.create(),
 
     // Data som skall lagras i grafikminnet hamnar i en 'buffer'. Varje buffer
     // får ett unikt tal (en slags referens) som du använder när du vill be
@@ -74,41 +74,41 @@ var shared = {
 
 // Den här funktionen körs automatiskt när sidan laddas (se index.html).
 function main(context) {
-	gl = context;
+    gl = context;
 
     // 'keydown' är en funktion i den här filen. Genom att lägga till den som 
     // en händelse-lyssnare så kommer den att kallas på automatiskt varje gång
     // som användaren trycker ner en knapp.
-	window.addEventListener('keydown', keydown);
+    window.addEventListener('keydown', keydown);
 
     // Kompilera och länka ett program som kan köras på grafikkortet.
     // 'vertexShader' och 'fragmentShader' är konstanter som är definierade
     // i botten av den här filen. De innehåller koden för respektive shader.
-	var program = initializeProgram(vertexShader, fragmentShader);
-	if (!program) {
-		window.removeEventListener('keydown', keydown);
-		return;
-	}
+    var program = initializeProgram(vertexShader, fragmentShader);
+    if (!program) {
+        window.removeEventListener('keydown', keydown);
+        return;
+    }
 
     // Programmet är nu kompilerat. För att kunna invokera ett draw-call måste
     // vi därför veta hur grafikkortet förväntar sig få input-parametrarna.
     // Vår shader har tre inputs, en 'uniform'-matris och två 'attribute'-vektorer.
     // 'uniforms' sätts en gång per draw-call, 'attributes' hämtas automatiskt från
     // varje hörn i modellen som skall renderas. 
-	gl.useProgram(program);
-	shared.worldViewProjectionMatrixLocation = gl.getUniformLocation(program, 'u_worldViewProjection');
-	shared.vertexPositionLocation = gl.getAttribLocation(program, 'a_position');
+    gl.useProgram(program);
+    shared.worldViewProjectionMatrixLocation = gl.getUniformLocation(program, 'u_worldViewProjection');
+    shared.vertexPositionLocation = gl.getAttribLocation(program, 'a_position');
     shared.vertexColorLocation = gl.getAttribLocation(program, 'a_color');
 
     // 'attribute'-variabler måste aktiveras. Det behöver dock inte 'uniform'-variabler.
-	gl.enableVertexAttribArray(shared.vertexPositionLocation);
-	gl.enableVertexAttribArray(shared.vertexColorLocation);
+    gl.enableVertexAttribArray(shared.vertexPositionLocation);
+    gl.enableVertexAttribArray(shared.vertexColorLocation);
 
     // Vi genererar en perspectiveMatrix och lagrar i 'shared'. Se kursbok s.96-102
     // Perspektiv-matrisen kommer att förbli konstant så länge vi inte förändrar
     // fönstrets storlek, alltså behöver vi bara göra detta en gång.
-	var aspectRatio = gl.drawingBufferWidth / gl.drawingBufferHeight;
-	mat4.perspective(shared.projectionMatrix, Math.PI/4, aspectRatio, 1, 150);
+    var aspectRatio = gl.drawingBufferWidth / gl.drawingBufferHeight;
+    mat4.perspective(shared.projectionMatrix, Math.PI/4, aspectRatio, 1, 150);
 
     // Skapa geometrin i scenen och bind dem till varsin grafikkortsbuffer.
     // När detta är gjort behöver geometrin inte längre lagras i RAM-minnet.
@@ -172,16 +172,16 @@ function createSquare()
     // att definiera vilken typ av array vi har (32-bitars float). Vi
     // lagrar en referens till vår nya buffer i 'shared.square.positionBuffer'.
     // Denna referens behöver vi när vi vill måla ut golvet.
-	shared.square.positionBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.positionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    shared.square.positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
     // Vi gör sedan samma sak med färgerna. Notera att det inte spelar
     // någon roll för grafikkortet vad för typ av data vi lagrar. 
     // Positioner, färger, etc. är bara data!
-	shared.square.colorBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.colorBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    shared.square.colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
     // Det finns stöd i WebGL för att bara måla ut delar av ett objekt.
     // För att måla ut hela objektet måste vi därför komma ihåg hur många 
@@ -385,7 +385,7 @@ function frameCallback(time) {
 // Du kan läsa om bakgrunden till varför vi gör detta i kursboken på s.15-17
 //
 function setWorldViewProjection() {
-	mat4.multiply(shared.worldViewProjectionMatrix, shared.viewProjectionMatrix, shared.worldMatrix);
+    mat4.multiply(shared.worldViewProjectionMatrix, shared.viewProjectionMatrix, shared.worldMatrix);
     gl.uniformMatrix4fv(shared.worldViewProjectionMatrixLocation, false, shared.worldViewProjectionMatrix);
 
 }// function setWorldViewProjection()
@@ -399,7 +399,7 @@ function setWorldViewProjection() {
 function drawScene(time) {
 
     // Bara ett kortare namn (detta är en pekare)
-	var world = shared.worldMatrix; 
+    var world = shared.worldMatrix;
 
 
 
@@ -458,13 +458,13 @@ function drawScene(time) {
 // funktionen createSquare() som ligger längre upp.
 function drawSquare()
 {
-	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.positionBuffer);
-	gl.vertexAttribPointer(shared.vertexPositionLocation, 3, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.positionBuffer);
+    gl.vertexAttribPointer(shared.vertexPositionLocation, 3, gl.FLOAT, gl.FALSE, 0, 0);
 
-	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.colorBuffer);
-	gl.vertexAttribPointer(shared.vertexColorLocation, 4, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.colorBuffer);
+    gl.vertexAttribPointer(shared.vertexColorLocation, 4, gl.FLOAT, gl.FALSE, 0, 0);
 
-	gl.drawArrays(gl.TRIANGLES, 0, shared.square.triangleCount);
+    gl.drawArrays(gl.TRIANGLES, 0, shared.square.triangleCount);
 }// function drawSquare()
 
 
@@ -547,16 +547,16 @@ function drawPlanes() {
 //     v_color och gl_Position är returvärden som den här funktionen returnerar.
 var vertexShader =
 `
-	uniform mat4 u_worldViewProjection;
-	attribute vec4 a_position;
-	attribute vec4 a_color;
-	varying vec4 v_color;
+    uniform mat4 u_worldViewProjection;
+    attribute vec4 a_position;
+    attribute vec4 a_color;
+    varying vec4 v_color;
 
-	void main(void)
-	{
-		v_color = a_color;
-		gl_Position = u_worldViewProjection * a_position;
-	}
+    void main(void)
+    {
+        v_color = a_color;
+        gl_Position = u_worldViewProjection * a_position;
+    }
 `;
 
 // Körs på grafikkortet för varje pixel.
@@ -564,10 +564,10 @@ var vertexShader =
 //     avståndet till varje hörn i triangeln.
 var fragmentShader =
 `
-	varying highp vec4 v_color;
+    varying highp vec4 v_color;
 
-	void main(void)
-	{
-		gl_FragColor = v_color;
-	}
+    void main(void)
+    {
+        gl_FragColor = v_color;
+    }
 `;
