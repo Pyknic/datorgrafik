@@ -1,8 +1,8 @@
-// Välkommen till andra deluppgiften!
+// VÃ¤lkommen till andra deluppgiften!
 //
-// Följ instruktionerna på kurssidan och ändra gärna i den här filen.
-// Du kan när som helst testa din kod genom att öppna 'index.html' i
-// en webbläsare, förslagsvis Chrome.
+// FÃ¶lj instruktionerna pÃ¥ kurssidan och Ã¤ndra gÃ¤rna i den hÃ¤r filen.
+// Du kan nÃ¤r som helst testa din kod genom att Ã¶ppna 'index.html' i
+// en webblÃ¤sare, fÃ¶rslagsvis Chrome.
 //
 // Tips:
 // - 
@@ -11,16 +11,16 @@
 //
 // - 
 // 
-// - Om saker slutar fungera, försök kommentera ut ändringar tills 
+// - Om saker slutar fungera, fÃ¶rsÃ¶k kommentera ut Ã¤ndringar tills 
 //   det fungerar igen.
 // 
-// - Eventuella fel syns om du högerklickar i webbläsaren och väljer 'Inspektera'.
-//   Du kan även skriva kod och evaluera direkt i konsollen där.
+// - Eventuella fel syns om du hÃ¶gerklickar i webblÃ¤saren och vÃ¤ljer 'Inspektera'.
+//   Du kan Ã¤ven skriva kod och evaluera direkt i konsollen dÃ¤r.
 //
-// - För att felsöka din kod, skriv loggmeddelanden med 'console.log("Testar...");'
+// - FÃ¶r att felsÃ¶ka din kod, skriv loggmeddelanden med 'console.log("Testar...");'
 //
-// - Ibland används 'var' och ibland 'const'. Om du är osäker på vilken du
-//   skall använda så kör på 'var'.
+// - Ibland anvÃ¤nds 'var' och ibland 'const'. Om du Ã¤r osÃ¤ker pÃ¥ vilken du
+//   skall anvÃ¤nda sÃ¥ kÃ¶r pÃ¥ 'var'.
 
 var gl;
 

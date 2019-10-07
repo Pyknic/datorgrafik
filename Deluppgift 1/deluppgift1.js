@@ -1,148 +1,148 @@
-// Välkommen till första deluppgiften!
+// VÃ¤lkommen till fÃ¶rsta deluppgiften!
 //
-// Följ instruktionerna på kurssidan och ändra gärna i den här filen.
-// Du kan när som helst testa din kod genom att öppna 'index.html' i
-// en webbläsare, förslagsvis Chrome.
+// FÃ¶lj instruktionerna pÃ¥ kurssidan och Ã¤ndra gÃ¤rna i den hÃ¤r filen.
+// Du kan nÃ¤r som helst testa din kod genom att Ã¶ppna 'index.html' i
+// en webblÃ¤sare, fÃ¶rslagsvis Chrome.
 //
 // Tips:
-// - Börja med att kika på funktionen createSquare() längre ner och
-//   gör små ändringar för att förstå hur den fungerar.
+// - BÃ¶rja med att kika pÃ¥ funktionen createSquare() lÃ¤ngre ner och
+//   gÃ¶r smÃ¥ Ã¤ndringar fÃ¶r att fÃ¶rstÃ¥ hur den fungerar.
 //
 // - Se sedan om du kan fylla i createHouse() enligt uppgiftsbeskrivningen.
-//   Du behöver även ändra i drawScene() för att huset skall dyka upp.
+//   Du behÃ¶ver Ã¤ven Ã¤ndra i drawScene() fÃ¶r att huset skall dyka upp.
 //
-// - För att göra så att man kan slå på/av inställningar, ändra i
+// - FÃ¶r att gÃ¶ra sÃ¥ att man kan slÃ¥ pÃ¥/av instÃ¤llningar, Ã¤ndra i
 //   funktionen keydown().
 // 
-// - Om saker slutar fungera, försök kommentera ut ändringar tills 
+// - Om saker slutar fungera, fÃ¶rsÃ¶k kommentera ut Ã¤ndringar tills 
 //   det fungerar igen.
 // 
-// - Eventuella fel syns om du högerklickar i webbläsaren och väljer 'Inspektera'.
-//   Du kan även skriva kod och evaluera direkt i konsollen där.
+// - Eventuella fel syns om du hÃ¶gerklickar i webblÃ¤saren och vÃ¤ljer 'Inspektera'.
+//   Du kan Ã¤ven skriva kod och evaluera direkt i konsollen dÃ¤r.
 //
-// - För att felsöka din kod, skriv loggmeddelanden med 'console.log("Testar...");'
+// - FÃ¶r att felsÃ¶ka din kod, skriv loggmeddelanden med 'console.log("Testar...");'
 //
-// - Ibland används 'var' och ibland 'const'. Om du är osäker på vilken du
-//   skall använda så kör på 'var'.
+// - Ibland anvÃ¤nds 'var' och ibland 'const'. Om du Ã¤r osÃ¤ker pÃ¥ vilken du
+//   skall anvÃ¤nda sÃ¥ kÃ¶r pÃ¥ 'var'.
 
 var gl;
 
-// Här skapas ett objekt i JavaScript med ett antal medlemsvariabler som vi vill
-// skall vara globalt tillgängliga. Detta gör det enkelt för oss att komma åt
-// värdena i alla funktioner nedan.
+// HÃ¤r skapas ett objekt i JavaScript med ett antal medlemsvariabler som vi vill
+// skall vara globalt tillgÃ¤ngliga. Detta gÃ¶r det enkelt fÃ¶r oss att komma Ã¥t
+// vÃ¤rdena i alla funktioner nedan.
 //
 // Notera att raderna separeras med komma ',' och inte semikolon ';'. Anledningen 
-// är att detta endast är en upplistning av alla medlemsvariabler. Vi kan senare 
-// komma åt dessa i alla funktioner genom att skriva exempelvis 'shared.worldMatrix'.
+// Ã¤r att detta endast Ã¤r en upplistning av alla medlemsvariabler. Vi kan senare 
+// komma Ã¥t dessa i alla funktioner genom att skriva exempelvis 'shared.worldMatrix'.
 var shared = {
 
-    // Transformationsmatriser, 'mat4' är ett externt bibliotek. Se http://glmatrix.net/docs/module-mat4.html
-	worldMatrix: mat4.create(),               // W:     Transformerar från modellrymd till världsrymd
-	viewMatrix: mat4.create(),                // V:     Transformerar från världsrymd till vy-rymd
-	projectionMatrix: mat4.create(),          // P:     Gör avlägsna punkter mindre för att skapa djup-känsla
+    // Transformationsmatriser, 'mat4' Ã¤r ett externt bibliotek. Se http://glmatrix.net/docs/module-mat4.html
+	worldMatrix: mat4.create(),               // W:     Transformerar frÃ¥n modellrymd till vÃ¤rldsrymd
+	viewMatrix: mat4.create(),                // V:     Transformerar frÃ¥n vÃ¤rldsrymd till vy-rymd
+	projectionMatrix: mat4.create(),          // P:     GÃ¶r avlÃ¤gsna punkter mindre fÃ¶r att skapa djup-kÃ¤nsla
     viewProjectionMatrix: mat4.create(),      // P*V:   Uppdateras i frameCallback()
     worldViewProjectionMatrix: mat4.create(), // P*V*W: Uppdateras i setWorldViewProjection()
 
-    // Referenser som används när data skickas till grafikkortet
+    // Referenser som anvÃ¤nds nÃ¤r data skickas till grafikkortet
 	worldViewProjectionMatrixLocation: null,
 	vertexPositionLocation: null,
 	vertexColorLocation: null,
 
-    // Används för att räkna ut deltaTime
+    // AnvÃ¤nds fÃ¶r att rÃ¤kna ut deltaTime
 	time: 0,
 	previousTime: 0,
 
-    // Kamerans nuvarande position. Sätts i frameCallback().
-    // Du kan använda denna om du vill räkna ut avståndet till kameran.
-    // 'vec3' är ett externt bibliotek. Se http://glmatrix.net/docs/module-vec3.html
+    // Kamerans nuvarande position. SÃ¤tts i frameCallback().
+    // Du kan anvÃ¤nda denna om du vill rÃ¤kna ut avstÃ¥ndet till kameran.
+    // 'vec3' Ã¤r ett externt bibliotek. Se http://glmatrix.net/docs/module-vec3.html
 	cameraPosition: vec3.create(),
 
     // Data som skall lagras i grafikminnet hamnar i en 'buffer'. Varje buffer
-    // får ett unikt tal (en slags referens) som du använder när du vill be
-    // grafikkortet att rendera något. Dessa tal lagras här nedan.
+    // fÃ¥r ett unikt tal (en slags referens) som du anvÃ¤nder nÃ¤r du vill be
+    // grafikkortet att rendera nÃ¥got. Dessa tal lagras hÃ¤r nedan.
     square: { positionBuffer: null, colorBuffer: null, triangleCount: 0 },
     house: { positionBuffer: null, colorBuffer: null, triangleCount: 0 },
     house2: { indexBuffer: null, positionBuffer: null, colorBuffer: null, indiceCount: 0 },
     planes: { indexBuffer: null, positionBuffer: null, colorBuffer: null, indiceCount: 0 },
 
-    // Här har jag definierat en bool för att hålla koll på om scenen är pausad.
-    // Du kommer antagligen att behöva definiera dina egna flaggor på liknande sätt.
+    // HÃ¤r har jag definierat en bool fÃ¶r att hÃ¥lla koll pÃ¥ om scenen Ã¤r pausad.
+    // Du kommer antagligen att behÃ¶va definiera dina egna flaggor pÃ¥ liknande sÃ¤tt.
     paused: false
 };
 
 
 
-// Den här funktionen körs automatiskt när sidan laddas (se index.html).
+// Den hÃ¤r funktionen kÃ¶rs automatiskt nÃ¤r sidan laddas (se index.html).
 function main(context) {
 	gl = context;
 
-    // 'keydown' är en funktion i den här filen. Genom att lägga till den som 
-    // en händelse-lyssnare så kommer den att kallas på automatiskt varje gång
-    // som användaren trycker ner en knapp.
+    // 'keydown' Ã¤r en funktion i den hÃ¤r filen. Genom att lÃ¤gga till den som 
+    // en hÃ¤ndelse-lyssnare sÃ¥ kommer den att kallas pÃ¥ automatiskt varje gÃ¥ng
+    // som anvÃ¤ndaren trycker ner en knapp.
 	window.addEventListener('keydown', keydown);
 
-    // Kompilera och länka ett program som kan köras på grafikkortet.
-    // 'vertexShader' och 'fragmentShader' är konstanter som är definierade
-    // i botten av den här filen. De innehåller koden för respektive shader.
+    // Kompilera och lÃ¤nka ett program som kan kÃ¶ras pÃ¥ grafikkortet.
+    // 'vertexShader' och 'fragmentShader' Ã¤r konstanter som Ã¤r definierade
+    // i botten av den hÃ¤r filen. De innehÃ¥ller koden fÃ¶r respektive shader.
 	var program = initializeProgram(vertexShader, fragmentShader);
 	if (!program) {
 		window.removeEventListener('keydown', keydown);
 		return;
 	}
 
-    // Programmet är nu kompilerat. För att kunna invokera ett draw-call måste
-    // vi därför veta hur grafikkortet förväntar sig få input-parametrarna.
-    // Vår shader har tre inputs, en 'uniform'-matris och två 'attribute'-vektorer.
-    // 'uniforms' sätts en gång per draw-call, 'attributes' hämtas automatiskt från
-    // varje hörn i modellen som skall renderas. 
+    // Programmet Ã¤r nu kompilerat. FÃ¶r att kunna invokera ett draw-call mÃ¥ste
+    // vi dÃ¤rfÃ¶r veta hur grafikkortet fÃ¶rvÃ¤ntar sig fÃ¥ input-parametrarna.
+    // VÃ¥r shader har tre inputs, en 'uniform'-matris och tvÃ¥ 'attribute'-vektorer.
+    // 'uniforms' sÃ¤tts en gÃ¥ng per draw-call, 'attributes' hÃ¤mtas automatiskt frÃ¥n
+    // varje hÃ¶rn i modellen som skall renderas. 
 	gl.useProgram(program);
 	shared.worldViewProjectionMatrixLocation = gl.getUniformLocation(program, 'u_worldViewProjection');
 	shared.vertexPositionLocation = gl.getAttribLocation(program, 'a_position');
     shared.vertexColorLocation = gl.getAttribLocation(program, 'a_color');
 
-    // 'attribute'-variabler måste aktiveras. Det behöver dock inte 'uniform'-variabler.
+    // 'attribute'-variabler mÃ¥ste aktiveras. Det behÃ¶ver dock inte 'uniform'-variabler.
 	gl.enableVertexAttribArray(shared.vertexPositionLocation);
 	gl.enableVertexAttribArray(shared.vertexColorLocation);
 
     // Vi genererar en perspectiveMatrix och lagrar i 'shared'. Se kursbok s.96-102
-    // Perspektiv-matrisen kommer att förbli konstant så länge vi inte förändrar
-    // fönstrets storlek, alltså behöver vi bara göra detta en gång.
+    // Perspektiv-matrisen kommer att fÃ¶rbli konstant sÃ¥ lÃ¤nge vi inte fÃ¶rÃ¤ndrar
+    // fÃ¶nstrets storlek, alltsÃ¥ behÃ¶ver vi bara gÃ¶ra detta en gÃ¥ng.
 	var aspectRatio = gl.drawingBufferWidth / gl.drawingBufferHeight;
 	mat4.perspective(shared.projectionMatrix, Math.PI/4, aspectRatio, 1, 150);
 
     // Skapa geometrin i scenen och bind dem till varsin grafikkortsbuffer.
-    // När detta är gjort behöver geometrin inte längre lagras i RAM-minnet.
+    // NÃ¤r detta Ã¤r gjort behÃ¶ver geometrin inte lÃ¤ngre lagras i RAM-minnet.
     createSquare();
     createHouse();
     createHouse2();
     createPlanes();
 
     //
-    // <--- Här bör du lägga till en eller flera gl.enable(...); för att slå
-    //      på olika grafikkortsinställningar (exempelvis baksidegallring).
+    // <--- HÃ¤r bÃ¶r du lÃ¤gga till en eller flera gl.enable(...); fÃ¶r att slÃ¥
+    //      pÃ¥ olika grafikkortsinstÃ¤llningar (exempelvis baksidegallring).
     //      Tips: Googla 'WebGL enable backface culling'
     //
 
-    // Kör funktionen 'frameCallback' när fönstret är redo att rendera 
-    // nästa frame. frameCallback() kommer i sin tur att begära en ny
-    // rendering. 'frameCallback' är definierad längre ner i den här filen.
+    // KÃ¶r funktionen 'frameCallback' nÃ¤r fÃ¶nstret Ã¤r redo att rendera 
+    // nÃ¤sta frame. frameCallback() kommer i sin tur att begÃ¤ra en ny
+    // rendering. 'frameCallback' Ã¤r definierad lÃ¤ngre ner i den hÃ¤r filen.
     window.requestAnimationFrame(frameCallback);
 
 }// function main()
 
 
 
-// Den här funktionen skapar geometrin för golvet i scenen (två trianglar)
-// och binder till en grafikkortsbuffer. Den körs bara en gång, därefter
+// Den hÃ¤r funktionen skapar geometrin fÃ¶r golvet i scenen (tvÃ¥ trianglar)
+// och binder till en grafikkortsbuffer. Den kÃ¶rs bara en gÃ¥ng, dÃ¤refter
 // finns geometrin lagrad i grafikminnet.
 function createSquare()
 {
-    // Vi skapar en array med hörnpositioner i objektrymd. Varje grupp 
-    // om tre flyttal bildar ett hörn. I det här fallet använder vi inte 
-    // någon indexlista, alltså behöver vi upprepa samma hörn flera 
-    // gånger ([-30, 0, 30] exempelvis). 
+    // Vi skapar en array med hÃ¶rnpositioner i objektrymd. Varje grupp 
+    // om tre flyttal bildar ett hÃ¶rn. I det hÃ¤r fallet anvÃ¤nder vi inte 
+    // nÃ¥gon indexlista, alltsÃ¥ behÃ¶ver vi upprepa samma hÃ¶rn flera 
+    // gÃ¥nger ([-30, 0, 30] exempelvis). 
     var positions = [
-        // Den första triangeln
+        // Den fÃ¶rsta triangeln
         -30, 0, -30,
         -30, 0, 30,
         30, 0, -30,
@@ -153,56 +153,56 @@ function createSquare()
         30, 0, -30
     ];
 
-    // Alla hörn skall vara grå. Trots det måste vi ange lika många 
-    // färger som vi har vertiser i arrayen ovan, alltså loopar vi 6 
-    // gånger.
+    // Alla hÃ¶rn skall vara grÃ¥. Trots det mÃ¥ste vi ange lika mÃ¥nga 
+    // fÃ¤rger som vi har vertiser i arrayen ovan, alltsÃ¥ loopar vi 6 
+    // gÃ¥nger.
     var colors = [];
     for (var i = 0; i < 6; i++) { // Gray
-        // Detta är ett enkelt (men inte särskilt effektivt) sätt att
-        // lägga till element i slutet på en array i JavaScript. Varje
-        // färg består av 4 värden. Längden på arrayen kommer alltså
-        // att bli 6*4=24, medan antalet värden i positionsarrayen är
+        // Detta Ã¤r ett enkelt (men inte sÃ¤rskilt effektivt) sÃ¤tt att
+        // lÃ¤gga till element i slutet pÃ¥ en array i JavaScript. Varje
+        // fÃ¤rg bestÃ¥r av 4 vÃ¤rden. LÃ¤ngden pÃ¥ arrayen kommer alltsÃ¥
+        // att bli 6*4=24, medan antalet vÃ¤rden i positionsarrayen Ã¤r
         // 6*3=18.
         colors = colors.concat([0.5, 0.5, 0.5, 1]);
     }
 
-    // Vi begär att grafikkortet allokerar en ny buffer och fyller den
-    // med innehållet i vår array. Då JavaScript är löst typat till 
-    // skillnad från C++ så måste vi kalla på 'new Float32Array()' för
+    // Vi begÃ¤r att grafikkortet allokerar en ny buffer och fyller den
+    // med innehÃ¥llet i vÃ¥r array. DÃ¥ JavaScript Ã¤r lÃ¶st typat till 
+    // skillnad frÃ¥n C++ sÃ¥ mÃ¥ste vi kalla pÃ¥ 'new Float32Array()' fÃ¶r
     // att definiera vilken typ av array vi har (32-bitars float). Vi
-    // lagrar en referens till vår nya buffer i 'shared.square.positionBuffer'.
-    // Denna referens behöver vi när vi vill måla ut golvet.
+    // lagrar en referens till vÃ¥r nya buffer i 'shared.square.positionBuffer'.
+    // Denna referens behÃ¶ver vi nÃ¤r vi vill mÃ¥la ut golvet.
 	shared.square.positionBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.positionBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    // Vi gör sedan samma sak med färgerna. Notera att det inte spelar
-    // någon roll för grafikkortet vad för typ av data vi lagrar. 
-    // Positioner, färger, etc. är bara data!
+    // Vi gÃ¶r sedan samma sak med fÃ¤rgerna. Notera att det inte spelar
+    // nÃ¥gon roll fÃ¶r grafikkortet vad fÃ¶r typ av data vi lagrar. 
+    // Positioner, fÃ¤rger, etc. Ã¤r bara data!
 	shared.square.colorBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.colorBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    // Det finns stöd i WebGL för att bara måla ut delar av ett objekt.
-    // För att måla ut hela objektet måste vi därför komma ihåg hur många 
-    // trianglar det består av (Antalet trianglar = Antalet hörnen / 3).
+    // Det finns stÃ¶d i WebGL fÃ¶r att bara mÃ¥la ut delar av ett objekt.
+    // FÃ¶r att mÃ¥la ut hela objektet mÃ¥ste vi dÃ¤rfÃ¶r komma ihÃ¥g hur mÃ¥nga 
+    // trianglar det bestÃ¥r av (Antalet trianglar = Antalet hÃ¶rnen / 3).
     shared.square.triangleCount = positions.length / 3;
 
 }// function createSquare()
 
 
 
-// Skapar det första huset (du måste själv implementera den här funktionen)
+// Skapar det fÃ¶rsta huset (du mÃ¥ste sjÃ¤lv implementera den hÃ¤r funktionen)
 function createHouse() {
 
     //
-    // Den här funktionen måste du själv implementera. Du kan utgå 
-    // ifrån koden i 'createSquare()' ovan, men modifiera den så att
-    // ett hus skapas. På Canvas finns en bild av huset som du kan
-    // kika på för att få koordinaterna rätt. Du måste dock lista 
-    // ut hörnordningen på egen hand.
+    // Den hÃ¤r funktionen mÃ¥ste du sjÃ¤lv implementera. Du kan utgÃ¥ 
+    // ifrÃ¥n koden i 'createSquare()' ovan, men modifiera den sÃ¥ att
+    // ett hus skapas. PÃ¥ Canvas finns en bild av huset som du kan
+    // kika pÃ¥ fÃ¶r att fÃ¥ koordinaterna rÃ¤tt. Du mÃ¥ste dock lista 
+    // ut hÃ¶rnordningen pÃ¥ egen hand.
     //
-    // Här är de värden som måste sättas i funktionen:
+    // HÃ¤r Ã¤r de vÃ¤rden som mÃ¥ste sÃ¤ttas i funktionen:
     //     shared.house.positionBuffer
     //     shared.house.colorBuffer
     //     shared.house.triangleCount
@@ -212,46 +212,46 @@ function createHouse() {
 
 
 
-// Skapar det andra huset (du måste ändra här så att den målar ut ett hus
-// istället för en kvadrat)
+// Skapar det andra huset (du mÃ¥ste Ã¤ndra hÃ¤r sÃ¥ att den mÃ¥lar ut ett hus
+// istÃ¤llet fÃ¶r en kvadrat)
 function createHouse2() {
 
     //
-    // Detta hus skall se identiskt ut som det förra, men istället för
-    // att ange samma hörn flera gånger skall du använda en indexlista.
-    // Nedan finns ett exempel som skapar en rektangel med hjälp av en
+    // Detta hus skall se identiskt ut som det fÃ¶rra, men istÃ¤llet fÃ¶r
+    // att ange samma hÃ¶rn flera gÃ¥nger skall du anvÃ¤nda en indexlista.
+    // Nedan finns ett exempel som skapar en rektangel med hjÃ¤lp av en
     // indexlista.
     //
 
-    // Här lagras varje unikt hörn. När du är färdig kommer den att 
-    // bestå av 10 hörnen (index 0 - 9) och alltså totalt 30 nummer.
+    // HÃ¤r lagras varje unikt hÃ¶rn. NÃ¤r du Ã¤r fÃ¤rdig kommer den att 
+    // bestÃ¥ av 10 hÃ¶rnen (index 0 - 9) och alltsÃ¥ totalt 30 nummer.
     var vertices = [
-        0, -15, -15, // Hörn 0     <--- OBS! Dessa hörn skall bytas ut!
-        0, -15, 15,  // Hörn 1
-        0, 15, -15,  // Hörn 2
-        0, 15, 15    // Hörn 3
+        0, -15, -15, // HÃ¶rn 0     <--- OBS! Dessa hÃ¶rn skall bytas ut!
+        0, -15, 15,  // HÃ¶rn 1
+        0, 15, -15,  // HÃ¶rn 2
+        0, 15, 15    // HÃ¶rn 3
     ];
 
-    // Här lagras varje hörns färg i samma ordning som ovan. När du är 
-    // färdig kommer den att bestå av 10 färger (index 0 - 9) och 
-    // alltså totalt 40 nummer (10 * 4).
+    // HÃ¤r lagras varje hÃ¶rns fÃ¤rg i samma ordning som ovan. NÃ¤r du Ã¤r 
+    // fÃ¤rdig kommer den att bestÃ¥ av 10 fÃ¤rger (index 0 - 9) och 
+    // alltsÃ¥ totalt 40 nummer (10 * 4).
     var colors = [ 
-        1, 0, 0, 1, // Röd        <--- OBS! Dessa färger skall bytas ut!
-        0, 1, 0, 1, // Grön
-        0, 0, 1, 0, // Blå
+        1, 0, 0, 1, // RÃ¶d        <--- OBS! Dessa fÃ¤rger skall bytas ut!
+        0, 1, 0, 1, // GrÃ¶n
+        0, 0, 1, 0, // BlÃ¥
         1, 1, 1, 1  // Vit
     ];
 
-    // Två trianglar definieras genom att lista indexen i arrayerna ovan.
-    // När funktionen är färdig kommer den att bestå av 16 trianglar, dvs. 48 index.
+    // TvÃ¥ trianglar definieras genom att lista indexen i arrayerna ovan.
+    // NÃ¤r funktionen Ã¤r fÃ¤rdig kommer den att bestÃ¥ av 16 trianglar, dvs. 48 index.
     var indices = [ 
-        0, 1, 3, // Första triangeln   <--- OBS! Dessa index skall bytas ut!
+        0, 1, 3, // FÃ¶rsta triangeln   <--- OBS! Dessa index skall bytas ut!
         0, 3, 2  // Andra triangeln
     ];
 
-    // Vi allokerar en ny buffer, men detta är en ELEMENT_ARRAY_BUFFER istället för en
-    // ARRAY_BUFFER. Det betyder att den lagrar index till andra arrayer. Typen är även
-    // Uint16Array (16-bitars unsigned int) istället för Float32Array.
+    // Vi allokerar en ny buffer, men detta Ã¤r en ELEMENT_ARRAY_BUFFER istÃ¤llet fÃ¶r en
+    // ARRAY_BUFFER. Det betyder att den lagrar index till andra arrayer. Typen Ã¤r Ã¤ven
+    // Uint16Array (16-bitars unsigned int) istÃ¤llet fÃ¶r Float32Array.
     shared.house2.indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shared.house2.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
@@ -266,20 +266,20 @@ function createHouse2() {
     gl.bindBuffer(gl.ARRAY_BUFFER, shared.house2.colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    // Förra gången lagrade vi antalet trianglar. När man målar ut indexerade primitiver
-    // behöver man istället ange hur många index man har. Just nu är det 6 st, men när
-    // du är färdig med den här funktionen kommer det att vara 16*3=48.
+    // FÃ¶rra gÃ¥ngen lagrade vi antalet trianglar. NÃ¤r man mÃ¥lar ut indexerade primitiver
+    // behÃ¶ver man istÃ¤llet ange hur mÃ¥nga index man har. Just nu Ã¤r det 6 st, men nÃ¤r
+    // du Ã¤r fÃ¤rdig med den hÃ¤r funktionen kommer det att vara 16*3=48.
     shared.house2.indiceCount = indices.length;
 
 }// function createHouse2()
 
 
 
-// Skapar det första huset (du måste själv implementera den här funktionen)
+// Skapar det fÃ¶rsta huset (du mÃ¥ste sjÃ¤lv implementera den hÃ¤r funktionen)
 function createPlanes() {
     //
-    // Här skapar du två halvtransparenta planes enligt uppgiften. Du kan skapa dem
-    // i samma objekt. Här är de värden som måste sättas:
+    // HÃ¤r skapar du tvÃ¥ halvtransparenta planes enligt uppgiften. Du kan skapa dem
+    // i samma objekt. HÃ¤r Ã¤r de vÃ¤rden som mÃ¥ste sÃ¤ttas:
     //     shared.planes.indexBuffer
     //     shared.planes.positionBuffer
     //     shared.planes.colorBuffer
@@ -290,99 +290,99 @@ function createPlanes() {
 
 
 
-// Denna funktion körs varje gång en knapp trycks ner på tangentbordet.
-// Jag har lagt in ett par tomma if-satser nedan som du förväntas modifiera.
-// Lösningen är något mer komplicerad än för 'shared.paused', men inte mycket.
+// Denna funktion kÃ¶rs varje gÃ¥ng en knapp trycks ner pÃ¥ tangentbordet.
+// Jag har lagt in ett par tomma if-satser nedan som du fÃ¶rvÃ¤ntas modifiera.
+// LÃ¶sningen Ã¤r nÃ¥got mer komplicerad Ã¤n fÃ¶r 'shared.paused', men inte mycket.
 //
 // Tips: Google is your friend.
 //
 function keydown(event) {
 
-    // Om det var knappen 'p', sätt 'paused' till motsatsen till 'paused'.
+    // Om det var knappen 'p', sÃ¤tt 'paused' till motsatsen till 'paused'.
     if (event.key == 'p') {
         shared.paused = !shared.paused;
     }
         
-    // Slå på/av djup-testning.
+    // SlÃ¥ pÃ¥/av djup-testning.
     if (event.key == 'd') {
         //
-        // Den här funktionen skriver du själv.
+        // Den hÃ¤r funktionen skriver du sjÃ¤lv.
         //
     }
 
-    // Slå på/av backface-culling.
+    // SlÃ¥ pÃ¥/av backface-culling.
     if (event.key == 'c') {
         //
-        // Den här funktionen skriver du själv.
+        // Den hÃ¤r funktionen skriver du sjÃ¤lv.
         //
     }
 
-    // Växla mellan 'over' och 'add' som metod för alpha-blending.
+    // VÃ¤xla mellan 'over' och 'add' som metod fÃ¶r alpha-blending.
     if (event.key == 'b') {
         //
-        // Den här funktionen skriver du själv.
+        // Den hÃ¤r funktionen skriver du sjÃ¤lv.
         //
     }
 }// function keydown()
 
 
 
-// Den här funktionen kallas på varje frame. Den beräknar delta-tiden sedan
-// den föregående framen och invokerar sedan 'frame'-funktionen. Därefter
-// begär den en ny rendering. Du behöver inte ändra något i den här funktionen.
+// Den hÃ¤r funktionen kallas pÃ¥ varje frame. Den berÃ¤knar delta-tiden sedan
+// den fÃ¶regÃ¥ende framen och invokerar sedan 'frame'-funktionen. DÃ¤refter
+// begÃ¤r den en ny rendering. Du behÃ¶ver inte Ã¤ndra nÃ¥got i den hÃ¤r funktionen.
 function frameCallback(time) {
 
-    // Beräkna tiden sedan den föregående fram-en och uppdatera klockan.
+    // BerÃ¤kna tiden sedan den fÃ¶regÃ¥ende fram-en och uppdatera klockan.
     var deltaTime = time - shared.previousTime;
     if (!shared.paused) shared.time += deltaTime;
     shared.previousTime = time;
     var timeSecs = shared.time * 0.001;
 
-    // Rensa skärmens färg- och djupbuffer.
+    // Rensa skÃ¤rmens fÃ¤rg- och djupbuffer.
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Flytta kameran till en position x = cos(t)*d, z = sin(t)*d 
-    // där t är tiden i sekunder och d är avståndet (y är uppåt).
+    // dÃ¤r t Ã¤r tiden i sekunder och d Ã¤r avstÃ¥ndet (y Ã¤r uppÃ¥t).
     const cameraDistance = 80;
     vec3.set(shared.cameraPosition, Math.cos(timeSecs) * cameraDistance, 0, Math.sin(timeSecs) * cameraDistance);
     mat4.lookAt(shared.viewMatrix, shared.cameraPosition, vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
 
-    // Av prestandaskäl kan vi multiplicera perspektiv-matrisen med vy-matrisen en gång
-    // och använda det framräknade värdet framöver (se kursboken s.65).
+    // Av prestandaskÃ¤l kan vi multiplicera perspektiv-matrisen med vy-matrisen en gÃ¥ng
+    // och anvÃ¤nda det framrÃ¤knade vÃ¤rdet framÃ¶ver (se kursboken s.65).
     mat4.multiply(shared.viewProjectionMatrix, shared.projectionMatrix, shared.viewMatrix);
 
-    // Det är dags att måla ut scenen!
+    // Det Ã¤r dags att mÃ¥la ut scenen!
     drawScene(timeSecs);
 
-    // Schemalägg en ny utritning så snart som möjligt. Detta gör att vi inte 
-    // behöver ha en while()-loop som blockar CPUn. 
+    // SchemalÃ¤gg en ny utritning sÃ¥ snart som mÃ¶jligt. Detta gÃ¶r att vi inte 
+    // behÃ¶ver ha en while()-loop som blockar CPUn. 
     window.requestAnimationFrame(frameCallback);
 
 }// function frameCallback()
 
 
 
-// Den här funktionen behöver du inte ändra i, men här är en beskrivning av hur den fungerar:
+// Den hÃ¤r funktionen behÃ¶ver du inte Ã¤ndra i, men hÃ¤r Ã¤r en beskrivning av hur den fungerar:
 //
-// Illusionen av 3D skapas genom att varje hörn i objektet transformeras med hjälp av tre 
+// Illusionen av 3D skapas genom att varje hÃ¶rn i objektet transformeras med hjÃ¤lp av tre 
 // matriser...
 // 
 //      s = P*V*W*p
 // 
-// ...där p är hörnets position (i objektrymd) och s är positionen på skärmen som vi söker.
-// W = worldMatrix, alltså matrisen som flyttar en position från objekt-rymd till världs-rymd
-// V = viewMatrix, alltså matrisen som flyttar positionen från världs-rymd till vy-rymd
-// P = perspectiveMatrix, alltså matrisen som skapar en djupkänsla genom att förminska objekt som
-//     ligger långt bort från kameran.
+// ...dÃ¤r p Ã¤r hÃ¶rnets position (i objektrymd) och s Ã¤r positionen pÃ¥ skÃ¤rmen som vi sÃ¶ker.
+// W = worldMatrix, alltsÃ¥ matrisen som flyttar en position frÃ¥n objekt-rymd till vÃ¤rlds-rymd
+// V = viewMatrix, alltsÃ¥ matrisen som flyttar positionen frÃ¥n vÃ¤rlds-rymd till vy-rymd
+// P = perspectiveMatrix, alltsÃ¥ matrisen som skapar en djupkÃ¤nsla genom att fÃ¶rminska objekt som
+//     ligger lÃ¥ngt bort frÃ¥n kameran.
 //
-// I och med att vi redan räknat ut P*V varje gång kameran flyttar på sig, kan vi helt enkelt
+// I och med att vi redan rÃ¤knat ut P*V varje gÃ¥ng kameran flyttar pÃ¥ sig, kan vi helt enkelt
 // multiplicera denna matris med W och skicka den resulterande matrisen till grafikshaderns
-// uniform-variabel. Detta måste vi göra varje draw-call, d.v.s. varje gång vi vill rendera
-// något i världen med en ny position eller rotation. p hämtar shadern automatiskt från
-// vertex-buffern när den itererar över alla hörnen i modellen.
+// uniform-variabel. Detta mÃ¥ste vi gÃ¶ra varje draw-call, d.v.s. varje gÃ¥ng vi vill rendera
+// nÃ¥got i vÃ¤rlden med en ny position eller rotation. p hÃ¤mtar shadern automatiskt frÃ¥n
+// vertex-buffern nÃ¤r den itererar Ã¶ver alla hÃ¶rnen i modellen.
 //
-// Du kan läsa om bakgrunden till varför vi gör detta i kursboken på s.15-17
+// Du kan lÃ¤sa om bakgrunden till varfÃ¶r vi gÃ¶r detta i kursboken pÃ¥ s.15-17
 //
 function setWorldViewProjection() {
 	mat4.multiply(shared.worldViewProjectionMatrix, shared.viewProjectionMatrix, shared.worldMatrix);
@@ -392,37 +392,37 @@ function setWorldViewProjection() {
 
 
 
-// Den här funktionen målar ut scenen. Varje gång du vill måla ut ett nytt objekt
-// (ett nytt draw-call) så måste du förbereda P*V*W-matrisen som du vill skicka med
-// till shader-programmet. Detta görs med funktionen setWorldViewProjection(). Den
-// tar inga in-parametrar, istället manipulerar du 'shared.worldMatrix'.
+// Den hÃ¤r funktionen mÃ¥lar ut scenen. Varje gÃ¥ng du vill mÃ¥la ut ett nytt objekt
+// (ett nytt draw-call) sÃ¥ mÃ¥ste du fÃ¶rbereda P*V*W-matrisen som du vill skicka med
+// till shader-programmet. Detta gÃ¶rs med funktionen setWorldViewProjection(). Den
+// tar inga in-parametrar, istÃ¤llet manipulerar du 'shared.worldMatrix'.
 function drawScene(time) {
 
-    // Bara ett kortare namn (detta är en pekare)
+    // Bara ett kortare namn (detta Ã¤r en pekare)
 	var world = shared.worldMatrix; 
 
 
 
     // ----------------------------------------------------
-    // Detta 'nollställer' världsmatrisen.
+    // Detta 'nollstÃ¤ller' vÃ¤rldsmatrisen.
     mat4.identity(world); 
 
-    // Vi skapar en vektor med längd 20 som pekar neråt, sedan använder vi
-    // den för att göra om 'world' till en translation-matris (se kursboken s.59).
-    // Om vi därefter multiplicerar matrisen med en position så kommer positionen
-    // flyttas nedåt 20 steg.
+    // Vi skapar en vektor med lÃ¤ngd 20 som pekar nerÃ¥t, sedan anvÃ¤nder vi
+    // den fÃ¶r att gÃ¶ra om 'world' till en translation-matris (se kursboken s.59).
+    // Om vi dÃ¤refter multiplicerar matrisen med en position sÃ¥ kommer positionen
+    // flyttas nedÃ¥t 20 steg.
     const squareOffset = vec3.fromValues(0, -20, 0); 
     mat4.translate(world, world, squareOffset);
 
-    // Nu när vi har vår världsmatris (W) så kan vi räkna ut P*V*W-matrisen som
-    // skall skickas till grafikkortet. Vi gör detta genom att kalla på
-    // setWorldViewProjection(). Notera att den inte tar några in-parametrar.
-    // Istället läser den direkt från 'shared.worldMatrix'.
+    // Nu nÃ¤r vi har vÃ¥r vÃ¤rldsmatris (W) sÃ¥ kan vi rÃ¤kna ut P*V*W-matrisen som
+    // skall skickas till grafikkortet. Vi gÃ¶r detta genom att kalla pÃ¥
+    // setWorldViewProjection(). Notera att den inte tar nÃ¥gra in-parametrar.
+    // IstÃ¤llet lÃ¤ser den direkt frÃ¥n 'shared.worldMatrix'.
     setWorldViewProjection();
 
-    // Nu har grafikkortet fått transformationsmatrisen så vi kan rendera
-    // golvet. Hela den här processen från mat4.identity(world) till 
-    // drawSquare() är ett draw-call. Vi måste upprepa den här processen för
+    // Nu har grafikkortet fÃ¥tt transformationsmatrisen sÃ¥ vi kan rendera
+    // golvet. Hela den hÃ¤r processen frÃ¥n mat4.identity(world) till 
+    // drawSquare() Ã¤r ett draw-call. Vi mÃ¥ste upprepa den hÃ¤r processen fÃ¶r
     // varje objekt vi vill rendera.
     drawSquare();
     // ----------------------------------------------------
@@ -430,32 +430,32 @@ function drawScene(time) {
 
 
     //
-    // <-- Här implementerar du kod liknande den ovan, men som kör drawHouse()
-    //     istället för drawSquare() och som transformerar objektet så som det står
+    // <-- HÃ¤r implementerar du kod liknande den ovan, men som kÃ¶r drawHouse()
+    //     istÃ¤llet fÃ¶r drawSquare() och som transformerar objektet sÃ¥ som det stÃ¥r
     //     i uppgiften.
     //
 
     //
-    // <-- Här implementerar du koden som kör drawHouse2() 
+    // <-- HÃ¤r implementerar du koden som kÃ¶r drawHouse2() 
     //
 
     //
-    // <-- Här implementerar du koden som kör drawPlanes()
+    // <-- HÃ¤r implementerar du koden som kÃ¶r drawPlanes()
     //
 
-    // Tips: Tänk på att sätta världsmatrisen till identity mellan olika draw-calls
-    // och att köra setWorldViewProjection() för att skicka matrisen till grafikkortet
+    // Tips: TÃ¤nk pÃ¥ att sÃ¤tta vÃ¤rldsmatrisen till identity mellan olika draw-calls
+    // och att kÃ¶ra setWorldViewProjection() fÃ¶r att skicka matrisen till grafikkortet
     // innan rendering.
     //
-    // Tips: För en fullständig lista över vilka funktioner som finns i mat4,
-    // gå till http://glmatrix.net/docs/module-mat4.html
+    // Tips: FÃ¶r en fullstÃ¤ndig lista Ã¶ver vilka funktioner som finns i mat4,
+    // gÃ¥ till http://glmatrix.net/docs/module-mat4.html
 
 }// function drawScene()
 
 
-// Den här funktionen målar ut golvet i scenen. Du behöver inte göra några ändringar
-// här. För att göra om golvet till en rektangel och byta färg ändrar du istället i
-// funktionen createSquare() som ligger längre upp.
+// Den hÃ¤r funktionen mÃ¥lar ut golvet i scenen. Du behÃ¶ver inte gÃ¶ra nÃ¥gra Ã¤ndringar
+// hÃ¤r. FÃ¶r att gÃ¶ra om golvet till en rektangel och byta fÃ¤rg Ã¤ndrar du istÃ¤llet i
+// funktionen createSquare() som ligger lÃ¤ngre upp.
 function drawSquare()
 {
 	gl.bindBuffer(gl.ARRAY_BUFFER, shared.square.positionBuffer);
@@ -469,8 +469,8 @@ function drawSquare()
 
 
 
-// Den här funktionen målar ut det första huset i scenen. Du behöver inte göra 
-// några ändringar här. Huset skapar du i funktionen createHouse()
+// Den hÃ¤r funktionen mÃ¥lar ut det fÃ¶rsta huset i scenen. Du behÃ¶ver inte gÃ¶ra 
+// nÃ¥gra Ã¤ndringar hÃ¤r. Huset skapar du i funktionen createHouse()
 function drawHouse() {
     gl.bindBuffer(gl.ARRAY_BUFFER, shared.house.positionBuffer);
     gl.vertexAttribPointer(shared.vertexPositionLocation, 3, gl.FLOAT, gl.FALSE, 0, 0);
@@ -483,8 +483,8 @@ function drawHouse() {
 
 
 
-// Den här funktionen målar ut det andra huset i scenen. Du behöver inte göra 
-// några ändringar här. Huset skapar du i funktionen createHouse2()
+// Den hÃ¤r funktionen mÃ¥lar ut det andra huset i scenen. Du behÃ¶ver inte gÃ¶ra 
+// nÃ¥gra Ã¤ndringar hÃ¤r. Huset skapar du i funktionen createHouse2()
 function drawHouse2() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shared.house2.indexBuffer);
     
@@ -499,19 +499,19 @@ function drawHouse2() {
 
 
 
-// Den här funktionen målar ut de semi-transparenta planen. Du måste implementera 
-// den på egen hand. Du kommer att behöva använda funktionerna gl.disable(),
-// gl.blendFunc() och gl.enable() på rätt sätt.
+// Den hÃ¤r funktionen mÃ¥lar ut de semi-transparenta planen. Du mÃ¥ste implementera 
+// den pÃ¥ egen hand. Du kommer att behÃ¶va anvÃ¤nda funktionerna gl.disable(),
+// gl.blendFunc() och gl.enable() pÃ¥ rÃ¤tt sÃ¤tt.
 // 
-// Tips: Kolla på funktionen drawHouse2() som också målar ut geometri med en 
+// Tips: Kolla pÃ¥ funktionen drawHouse2() som ocksÃ¥ mÃ¥lar ut geometri med en 
 // indexlista.
 //
-// Tips: Du kan hitta mycket tips genom att Googla på exempelvis 'WebGL set blend mode'
+// Tips: Du kan hitta mycket tips genom att Googla pÃ¥ exempelvis 'WebGL set blend mode'
 //
 function drawPlanes() {
 
     //
-    // <-- Måla ut de halvtransparenta planen här med hjälp av en index-lista
+    // <-- MÃ¥la ut de halvtransparenta planen hÃ¤r med hjÃ¤lp av en index-lista
     //
 
 }// function drawPlanes()
@@ -519,32 +519,32 @@ function drawPlanes() {
 
 
 // --------------------------------------------------------------------------------
-// Här nedanför finns programkoden för respektive shader. Dessa skall inte
-// ändras i den här kursen, men kika för all del på hur koden är skriven.
-// Språket som koden är skriven i kallas GLSL och liknar c++.
+// HÃ¤r nedanfÃ¶r finns programkoden fÃ¶r respektive shader. Dessa skall inte
+// Ã¤ndras i den hÃ¤r kursen, men kika fÃ¶r all del pÃ¥ hur koden Ã¤r skriven.
+// SprÃ¥ket som koden Ã¤r skriven i kallas GLSL och liknar c++.
 //
 // Ordlista:
 //
-// uniform:     Input variabel som sätts en gång per draw-call. 
-// attribute:   Input som hämtas från en buffer en gång per hörn.
-// varying:     Sätts i vertexShadern som en slags returvärde. fragmentShadern
-//              körs sedan en gång för varje pixel (fragment) i en triangel
-//              genom att interpolera dessa värden med avseende på avståndet
-//              till just det hörnet.
-// gl_Position  Ett speciellt returvärde i vertexShadern som berättar vart hörnet
-//              skall målas ut i vy-rymd.
-// gl_FragColor Ett speciellt returnvärde i fragmentShadern som berättar vilken 
-//              färg pixeln (fragmentet) skall få. Pixeln anges i RGBA 
+// uniform:     Input variabel som sÃ¤tts en gÃ¥ng per draw-call. 
+// attribute:   Input som hÃ¤mtas frÃ¥n en buffer en gÃ¥ng per hÃ¶rn.
+// varying:     SÃ¤tts i vertexShadern som en slags returvÃ¤rde. fragmentShadern
+//              kÃ¶rs sedan en gÃ¥ng fÃ¶r varje pixel (fragment) i en triangel
+//              genom att interpolera dessa vÃ¤rden med avseende pÃ¥ avstÃ¥ndet
+//              till just det hÃ¶rnet.
+// gl_Position  Ett speciellt returvÃ¤rde i vertexShadern som berÃ¤ttar vart hÃ¶rnet
+//              skall mÃ¥las ut i vy-rymd.
+// gl_FragColor Ett speciellt returnvÃ¤rde i fragmentShadern som berÃ¤ttar vilken 
+//              fÃ¤rg pixeln (fragmentet) skall fÃ¥. Pixeln anges i RGBA 
 //              (x=red, y=green, z=blue, w=alpha).
 //
 
 
 
 
-// Körs på grafikkortet för varje hörn i modellen.
-//     u_worldViewProjection sätts i vår kod ovan varje draw-call.
-//     a_position och a_color läses från var sin buffer som lagras i grafikminnet.
-//     v_color och gl_Position är returvärden som den här funktionen returnerar.
+// KÃ¶rs pÃ¥ grafikkortet fÃ¶r varje hÃ¶rn i modellen.
+//     u_worldViewProjection sÃ¤tts i vÃ¥r kod ovan varje draw-call.
+//     a_position och a_color lÃ¤ses frÃ¥n var sin buffer som lagras i grafikminnet.
+//     v_color och gl_Position Ã¤r returvÃ¤rden som den hÃ¤r funktionen returnerar.
 var vertexShader =
 `
 	uniform mat4 u_worldViewProjection;
@@ -559,9 +559,9 @@ var vertexShader =
 	}
 `;
 
-// Körs på grafikkortet för varje pixel.
-//     v_color sätts till ett interpolerat värde baserat på
-//     avståndet till varje hörn i triangeln.
+// KÃ¶rs pÃ¥ grafikkortet fÃ¶r varje pixel.
+//     v_color sÃ¤tts till ett interpolerat vÃ¤rde baserat pÃ¥
+//     avstÃ¥ndet till varje hÃ¶rn i triangeln.
 var fragmentShader =
 `
 	varying highp vec4 v_color;
