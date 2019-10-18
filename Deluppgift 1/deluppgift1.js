@@ -299,26 +299,26 @@ function createPlanes() {
 function keydown(event) {
 
     // Om det var knappen 'p', sätt 'paused' till motsatsen till 'paused'.
-    if (event.key == 'p') {
+    if (event.key === 'p') {
         shared.paused = !shared.paused;
     }
         
     // Slå på/av djup-testning.
-    if (event.key == 'd') {
+    if (event.key === 'd') {
         //
         // Den här funktionen skriver du själv.
         //
     }
 
     // Slå på/av backface-culling.
-    if (event.key == 'c') {
+    if (event.key === 'c') {
         //
         // Den här funktionen skriver du själv.
         //
     }
 
     // Växla mellan 'over' och 'add' som metod för alpha-blending.
-    if (event.key == 'b') {
+    if (event.key === 'b') {
         //
         // Den här funktionen skriver du själv.
         //
