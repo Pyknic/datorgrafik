@@ -1,9 +1,7 @@
-function initializeProgram(vshaderSource, fshaderSource)
-{
+function initializeProgram(vshaderSource, fshaderSource) {
     var vshader = initializeShader(gl.VERTEX_SHADER, vshaderSource);
     var fshader = initializeShader(gl.FRAGMENT_SHADER, fshaderSource);
-    if (!vshader || !fshader)
-    {
+    if (!vshader || !fshader) {
         if (vshader) gl.deleteShader(vshader);
         if (fshader) gl.deleteShader(fshader);
         return null;
@@ -13,8 +11,7 @@ function initializeProgram(vshaderSource, fshaderSource)
     gl.attachShader(program, vshader);
     gl.attachShader(program, fshader);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS))
-    {
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         console.log(gl.getProgramInfoLog(program));
         gl.deleteProgram(program);
         return null;
@@ -25,13 +22,11 @@ function initializeProgram(vshaderSource, fshaderSource)
 
 
 
-function initializeShader(type, source)
-{
+function initializeShader(type, source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
-    {
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         console.log(gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
@@ -41,39 +36,32 @@ function initializeShader(type, source)
 
 
 
-function loadTexture(filename)
-{
+function loadTexture(filename) {
     var texture = gl.createTexture();
-    var image = new Image();
-    image.onload = function() {loadTextureCallback(this, texture)};
-    image.onerror = function() {loadTextureErrorCallback(filename)};
-    image.src = "textures/" + filename;
+    var image = document.createElement('img');
+    image.onload = function(ev) {
+        console.log('Texture "' + filename + '" loaded.');
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        ev.preventDefault();
+        return false;
+    };
+    image.onerror = function(ev) {
+        console.log('Could not load texture "' + filename + '" file.');
+        ev.preventDefault();
+        return false;
+    };
+    image.src = 'textures/' + filename;
     return texture;
 }
 
 
 
-function loadTextureCallback(image, texture)
-{
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-}
-
-
-
-function loadTextureErrorCallback(filename)
-{
-    console.log("loadTexture: Texture '" + filename + "' failed to load");
-}
-
-
-
-function billboardTransformation(billboard, view)
-{
+function billboardTransformation(billboard, view) {
     mat4.identity(billboard);
     billboard[0] = view[0];
     billboard[1] = view[4];
