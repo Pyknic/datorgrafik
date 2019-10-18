@@ -123,6 +123,9 @@ function initializeScene() {
     shared.sunFlareObject = twgl.primitives.createPlaneBufferInfo(gl, 55, 55);
     shared.sphereObject   = twgl.primitives.createSphereBufferInfo(gl, 4, 32, 32);
 
+    // Tips: Notera hur vi skapar planet för solar-flare objektet ovan. Du kan
+    //       göra något liknande för saturnus ringar.
+
     shared.sunTexture      = loadTexture("sun.png");
     shared.sunFlareTexture = loadTexture("lensflare.png");
     shared.venusTexture    = loadTexture("venus.png");
