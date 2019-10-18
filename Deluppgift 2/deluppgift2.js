@@ -1,16 +1,10 @@
 // Välkommen till andra deluppgiften!
 //
-// Följ instruktionerna på kurssidan och ändra gärna i den här filen.
-// Du kan när som helst testa din kod genom att öppna 'index.html' i
-// en webbläsare, förslagsvis Chrome.
+// Följ instruktionerna på kurssidan och ändra gärna i den här filen. Du kan när
+// som helst testa din kod genom att öppna 'index.html' i en webbläsare,
+// förslagsvis Firefox.
 //
 // Tips:
-// - 
-//
-// - 
-//
-// - 
-// 
 // - Om saker slutar fungera, försök kommentera ut ändringar tills 
 //   det fungerar igen.
 // 
@@ -59,12 +53,11 @@ var shared = {
     cameraDistanceDelta: 0,
 
     sunObject: null,
-    sunTexture: null,
     sunFlareObject: null,
-    sunFlareTexture: null,
-
     planetObject: null,
 
+    sunTexture: null,
+    sunFlareTexture: null,
     venusTexture: null,
     earthTexture: null,
     earthAtmosphereTexture: null,
@@ -128,24 +121,16 @@ function main(context) {
 function initializeScene() {
     shared.cameraDistance = 120;
 
-    shared.sunObject = twgl.primitives.createSphereBufferInfo(gl, 5, 32, 32);
+    shared.sunObject      = twgl.primitives.createSphereBufferInfo(gl, 5, 32, 32);
     shared.sunFlareObject = twgl.primitives.createPlaneBufferInfo(gl, 55, 55);
-    shared.sunTexture = loadTexture("sun.png");
+    shared.planetObject   = twgl.primitives.createSphereBufferInfo(gl, 4, 32, 32);
+
+    shared.sunTexture      = loadTexture("sun.png");
     shared.sunFlareTexture = loadTexture("lensflare.png");
+    shared.venusTexture    = loadTexture("venus.png");
 
-    shared.planetObject = twgl.primitives.createSphereBufferInfo(gl, 4, 32, 32);
-
-    shared.venusTexture           = loadTexture("venus.png");
-    shared.earthTexture           = loadTexture("earthDay.png");
-    shared.earthAtmosphereTexture = loadTexture("earthClouds.png");
-    shared.moonTexture            = loadTexture("moon.png");
-
-    shared.marsTexture        = loadTexture("mars.png");
-    shared.jupiterTexture     = loadTexture("jupiter.png");
-    shared.saturnTexture      = loadTexture("saturn.png");
-    shared.saturnRingsTexture = loadTexture("saturnRings.png");
-
-    shared.ambientColor = vec4.fromValues(0.3, 0.3, 0.3, 1);
+    shared.lightIntensity = 1.0;
+    shared.ambientColor   = vec4.fromValues(0.3, 0.3, 0.3, 1);
 }
 
 
@@ -283,15 +268,9 @@ function drawScene(time) {
     mat4.identity(world); // Nollställer världsmatrisen
 
     drawVenus(world, time);
-
     //
     // <-- Måla ut dina egna planeter här!
     //
-
-    drawEarth(world, time);
-    drawMars(world, time);
-    drawJupiter(world, time);
-    drawSaturn(world, time);
 
     // Det är viktigt att solen målas ut sist. Anledningen är att denna funktion
     // gör förändringar i vymatrisen för att kunna måla ut solstrålarna platt på
@@ -332,7 +311,7 @@ function drawVenus(world, time) {
     // transformera alla vertiser i modellen. Matrisen är alltid 4x4, oavsett
     // hur många transformationer vi lagrar ner.
     mat4.rotateY(world, world, time / 4);
-    mat4.translate(world, world, vec3.fromValues(15, 0, 0));
+    mat4.translate(world, world, vec3.fromValues(20, 0, 0));
     mat4.rotateY(world, world, time);
     mat4.scale(world, world, vec3.fromValues(0.6, 0.6, 0.6));
 
@@ -358,155 +337,6 @@ function drawVenus(world, time) {
     // Plockar ut den senast tillagda världsmatrisen från stacken, vilket
     // återställer den transformation vi arbetade på tidigare. Du måste köra
     // "pop" lika många gånger som du kört "push".
-    popWorldMatrix();
-}
-
-
-
-function drawEarth(world, time) {
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, time / 5);
-    mat4.translate(world, world, vec3.fromValues(35, 0, 0));
-    mat4.rotateY(world, world, time);
-    mat4.scale(world, world, vec3.fromValues(0.6, 0.6, 0.6));
-
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.earthTexture);
-    drawObject(shared.planetObject);
-
-    pushWorldMatrix();
-    mat4.scale(world, world, vec3.fromValues(1.1, 1.1, 1.1));
-    mat4.rotateY(world, world, -time * 1.4);
-
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.earthAtmosphereTexture);
-    gl.enable(gl.BLEND);
-    gl.disable(gl.CULL_FACE);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-    drawObject(shared.planetObject);
-    gl.enable(gl.CULL_FACE);
-    gl.disable(gl.BLEND);
-    popWorldMatrix();
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, time / 3);
-    mat4.translate(world, world, vec3.fromValues(6, 0, 0));
-    mat4.scale(world, world, vec3.fromValues(0.3, 0.3, 0.3));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.moonTexture);
-    drawObject(shared.planetObject);
-    popWorldMatrix();
-
-    popWorldMatrix();
-}
-
-
-
-function drawMars(world, time) {
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, time / 6);
-    mat4.translate(world, world, vec3.fromValues(45, 0, 0));
-    mat4.rotateY(world, world, time / 2);
-    mat4.scale(world, world, vec3.fromValues(0.5, 0.5, 0.5));
-
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.marsTexture);
-    drawObject(shared.planetObject);
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, 3.1415 - time / 2 + time * 0.7);
-    mat4.translate(world, world, vec3.fromValues(8, 0, 0));
-    mat4.scale(world, world, vec3.fromValues(0.3, 0.3, 0.3));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.moonTexture);
-    drawObject(shared.planetObject);
-    popWorldMatrix();
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, -time / 2 + time);
-    mat4.translate(world, world, vec3.fromValues(6, 0, 0));
-    mat4.scale(world, world, vec3.fromValues(0.3, 0.3, 0.3));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.moonTexture);
-    drawObject(shared.planetObject);
-    popWorldMatrix();
-
-    popWorldMatrix();
-}
-
-
-
-function drawJupiter(world, time) {
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, time / 7);
-    mat4.translate(world, world, vec3.fromValues(65, 0, 0));
-    mat4.rotateY(world, world, time / 3);
-    mat4.scale(world, world, vec3.fromValues(0.9, 0.9, 0.9));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.jupiterTexture);
-    drawObject(shared.planetObject);
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, -time / 3);
-    mat4.rotateX(world, world, time);
-    mat4.translate(world, world, vec3.fromValues(0, 0, 6));
-    mat4.scale(world, world, vec3.fromValues(0.3, 0.3, 0.3));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.moonTexture);
-    drawObject(shared.planetObject);
-    popWorldMatrix();
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, -time / 3);
-    mat4.rotateY(world, world, time);
-    mat4.translate(world, world, vec3.fromValues(7, 0, 0));
-    mat4.scale(world, world, vec3.fromValues(0.3, 0.3, 0.3));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.moonTexture);
-    drawObject(shared.planetObject);
-    popWorldMatrix();
-
-    pushWorldMatrix();
-    mat4.rotateY(world, world, -time / 3);
-    mat4.rotateZ(world, world, time);
-    mat4.translate(world, world, vec3.fromValues(0, 8, 0));
-    mat4.scale(world, world, vec3.fromValues(0.3, 0.3, 0.3));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.moonTexture);
-    drawObject(shared.planetObject);
-    popWorldMatrix();
-
-    popWorldMatrix();
-}
-
-
-
-function drawSaturn(world, time) {
-    pushWorldMatrix();
-
-    mat4.rotateY(world, world, time / 8);
-    mat4.translate(world, world, vec3.fromValues(85, 0, 0));
-    mat4.rotateY(world, world, time / 4);
-    mat4.scale(world, world, vec3.fromValues(0.8, 1.0, 0.8));
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.saturnTexture);
-    drawObject(shared.planetObject);
-
-    pushWorldMatrix();
-
-    setTransformationAndLighting(true);
-    gl.bindTexture(gl.TEXTURE_2D, shared.saturnRingsTexture);
-    gl.enable(gl.BLEND);
-    gl.disable(gl.CULL_FACE);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-    drawObject(shared.sunFlareObject);
-    gl.enable(gl.CULL_FACE);
-    gl.disable(gl.BLEND);
-    popWorldMatrix();
-
     popWorldMatrix();
 }
 
