@@ -52,9 +52,8 @@ var shared = {
     cameraDistance: 0,
     cameraDistanceDelta: 0,
 
-    sunObject: null,
     sunFlareObject: null,
-    planetObject: null,
+    sphereObject: null,
 
     sunTexture: null,
     sunFlareTexture: null,
@@ -121,9 +120,8 @@ function main(context) {
 function initializeScene() {
     shared.cameraDistance = 120;
 
-    shared.sunObject      = twgl.primitives.createSphereBufferInfo(gl, 5, 32, 32);
     shared.sunFlareObject = twgl.primitives.createPlaneBufferInfo(gl, 55, 55);
-    shared.planetObject   = twgl.primitives.createSphereBufferInfo(gl, 4, 32, 32);
+    shared.sphereObject   = twgl.primitives.createSphereBufferInfo(gl, 4, 32, 32);
 
     shared.sunTexture      = loadTexture("sun.png");
     shared.sunFlareTexture = loadTexture("lensflare.png");
@@ -323,7 +321,7 @@ function drawVenus(world, time) {
 
     // Här skickas draw-callet för planeten. Efter den här raden kan
     // världsmatrisen modifieras fritt.
-    drawObject(shared.planetObject);
+    drawObject(shared.sphereObject);
 
     // -----------------------------------------------------------------------//
     // Här skulle du exempelvis kunna köra "pushWorldMatrix()" igen för att
@@ -350,7 +348,7 @@ function drawSun() {
 
     setTransformationAndLighting(false);
     gl.bindTexture(gl.TEXTURE_2D, shared.sunTexture);
-    drawObject(shared.sunObject);
+    drawObject(shared.sphereObject);
 
     billboardTransformation(shared.billboardMatrix, shared.viewMatrix);
     mat4.translate(world, world, vec3.fromValues(0, 0, 5));
