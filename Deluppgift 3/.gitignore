@@ -1,2 +1,8 @@
 Temp/
 metadata/
+**/ShaderCache/
+**/PackageCache/
+**/StateCache/
+CurrentLayout-default.dwlt
+Library/expandedItems
+Library/EditorInstance.json
