@@ -6,3 +6,6 @@ metadata/
 CurrentLayout-default.dwlt
 Library/expandedItems
 Library/EditorInstance.json
+Library/ScriptAssemblies/
+.idea/
+obj/
